@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TestTask.Enums;
+using TestTask.Helpers;
 using TestTask.Streams;
 using TestTask.Streams.Interfaces;
 using TestTask.Structs;
@@ -19,72 +20,39 @@ namespace TestTask
 		/// Второй параметр - путь до второго файла.</param>
 		private static void Main(string[] args)
 		{
-			IReadOnlyStream inputStream1 = GetInputStream(args[0]);
-			IReadOnlyStream inputStream2 = GetInputStream(args[1]);
-
-			IList<LetterStats> singleLetterStats = FillSingleLetterStats(inputStream1);
-			IList<LetterStats> doubleLetterStats = FillDoubleLetterStats(inputStream2);
-
-			RemoveCharStatsByType(singleLetterStats, CharType.Vowel);
-			RemoveCharStatsByType(doubleLetterStats, CharType.Consonants);
-
-			PrintStatistic(singleLetterStats);
-			PrintStatistic(doubleLetterStats);
-
-			// TODO : Необжодимо дождаться нажатия клавиши, прежде чем завершать выполнение программы.
-		}
-
-		/// <summary>
-		/// Ф-ция возвращает экземпляр потока с уже загруженным файлом для последующего посимвольного чтения.
-		/// </summary>
-		/// <param name="fileFullPath">Полный путь до файла для чтения</param>
-		/// <returns>Поток для последующего чтения.</returns>
-		private static IReadOnlyStream GetInputStream(string fileFullPath)
-		{
-			return new ReadOnlyStream(fileFullPath);
-		}
-
-		/// <summary>
-		/// Ф-ция считывающая из входящего потока все буквы, и возвращающая коллекцию статистик вхождения каждой буквы.
-		/// Статистика РЕГИСТРОЗАВИСИМАЯ!
-		/// </summary>
-		/// <param name="stream">Стрим для считывания символов для последующего анализа</param>
-		/// <returns>Коллекция статистик по каждой букве, что была прочитана из стрима.</returns>
-		private static IList<LetterStats> FillSingleLetterStats(IReadOnlyStream stream)
-		{
-			stream.ResetPositionToStart();
-			while (!stream.IsEof)
+			try
 			{
-				char c = stream.ReadNextChar();
+				if (args.Length != 2)
+				{
+					throw new ArgumentException("Входных аргументов должно быть два ", nameof(args));
+				}
 
-				// TODO : заполнять статистику с использованием метода IncStatistic. Учёт букв - регистрозависимый.
+				Dictionary<char, LetterStats> singleLetterStats = null;
+				Dictionary<char, LetterStats> doubleLetterStats = null;
+
+				using (IReadOnlyStream inputStream1 = new ReadOnlyStream(args[0]))
+				{
+					singleLetterStats = FillLetterStatsHelper.FillSingleLetterStats(inputStream1);
+				}
+				using (IReadOnlyStream inputStream2 = new ReadOnlyStream(args[1]))
+				{
+					doubleLetterStats = FillLetterStatsHelper.FillDoubleLetterStats(inputStream2);
+				}
+
+				//RemoveCharStatsByType(singleLetterStats, CharType.Vowel);
+				//RemoveCharStatsByType(doubleLetterStats, CharType.Consonants);
+
+				//PrintStatistic(singleLetterStats);
+				//PrintStatistic(doubleLetterStats);
 			}
-
-			//return ???;
-
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Ф-ция считывающая из входящего потока все буквы, и возвращающая коллекцию статистик вхождения парных букв.
-		/// В статистику должны попадать только пары из одинаковых букв, например АА, СС, УУ, ЕЕ и т.д.
-		/// Статистика - НЕ регистрозависимая!
-		/// </summary>
-		/// <param name="stream">Стрим для считывания символов для последующего анализа</param>
-		/// <returns>Коллекция статистик по каждой букве, что была прочитана из стрима.</returns>
-		private static IList<LetterStats> FillDoubleLetterStats(IReadOnlyStream stream)
-		{
-			stream.ResetPositionToStart();
-			while (!stream.IsEof)
+			catch (Exception ex)
 			{
-				char c = stream.ReadNextChar();
-
-				// TODO : заполнять статистику с использованием метода IncStatistic. Учёт букв - НЕ регистрозависимый.
+				Console.WriteLine(ex.Message);
 			}
-
-			//return ???;
-
-			throw new NotImplementedException();
+			finally
+			{
+				Console.ReadKey();
+			}
 		}
 
 		/// <summary>
@@ -118,15 +86,6 @@ namespace TestTask
 		{
 			// TODO : Выводить на экран статистику. Выводить предварительно отсортировав по алфавиту!
 			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Метод увеличивает счётчик вхождений по переданной структуре.
-		/// </summary>
-		/// <param name="letterStats"></param>
-		private static void IncStatistic(LetterStats letterStats)
-		{
-			letterStats.Count++;
 		}
 	}
 }
