@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TestTask.Enums;
 using TestTask.Helpers;
 using TestTask.Streams;
@@ -8,6 +9,9 @@ using TestTask.Structs;
 
 namespace TestTask
 {
+	/// <summary>
+	/// Корневой класс программы.
+	/// </summary>
 	public class Program
 	{
 		/// <summary>
@@ -39,11 +43,11 @@ namespace TestTask
 					doubleLetterStats = FillLetterStatsHelper.FillDoubleLetterStats(inputStream2);
 				}
 
-				//RemoveCharStatsByType(singleLetterStats, CharType.Vowel);
-				//RemoveCharStatsByType(doubleLetterStats, CharType.Consonants);
+				FilterCharStats.RemoveCharStatsByType(singleLetterStats, CharType.Vowel);
+				FilterCharStats.RemoveCharStatsByType(doubleLetterStats, CharType.Consonants);
 
-				//PrintStatistic(singleLetterStats);
-				//PrintStatistic(doubleLetterStats);
+				PrintStatistic(singleLetterStats);
+				PrintStatistic(doubleLetterStats);
 			}
 			catch (Exception ex)
 			{
@@ -56,36 +60,30 @@ namespace TestTask
 		}
 
 		/// <summary>
-		/// Ф-ция перебирает все найденные буквы/парные буквы, содержащие в себе только гласные или согласные буквы.
-		/// (Тип букв для перебора определяется параметром charType)
-		/// Все найденные буквы/пары соответствующие параметру поиска - удаляются из переданной коллекции статистик.
-		/// </summary>
-		/// <param name="letters">Коллекция со статистиками вхождения букв/пар</param>
-		/// <param name="charType">Тип букв для анализа</param>
-		private static void RemoveCharStatsByType(IList<LetterStats> letters, CharType charType)
-		{
-			// TODO : Удалить статистику по запрошенному типу букв.
-			switch (charType)
-			{
-				case CharType.Consonants:
-					break;
-
-				case CharType.Vowel:
-					break;
-			}
-		}
-
-		/// <summary>
-		/// Ф-ция выводит на экран полученную статистику в формате "{Буква} : {Кол-во}"
+		/// Выводит на экран полученную статистику в формате "{Буква} : {Кол-во}"
 		/// Каждая буква - с новой строки.
 		/// Выводить на экран необходимо предварительно отсортировав набор по алфавиту.
 		/// В конце отдельная строчка с ИТОГО, содержащая в себе общее кол-во найденных букв/пар
 		/// </summary>
 		/// <param name="letters">Коллекция со статистикой</param>
-		private static void PrintStatistic(IEnumerable<LetterStats> letters)
+		private static void PrintStatistic(Dictionary<char, LetterStats> letters)
 		{
 			// TODO : Выводить на экран статистику. Выводить предварительно отсортировав по алфавиту!
-			throw new NotImplementedException();
+			IEnumerable<KeyValuePair<char, LetterStats>> orderCollection = letters.OrderBy(x => x.Key).Select(x => x);
+			int uniqueCount = 0;
+			int generalCount = 0;
+
+			foreach (KeyValuePair<char, LetterStats> item in orderCollection)
+			{
+				Console.WriteLine(string.Format("{0} : {1}", item.Value.Letter, item.Value.Count));
+
+				uniqueCount++;
+				generalCount += item.Value.Count;
+			}
+
+			Console.WriteLine("ИТОГО уникальных: " + uniqueCount);
+			Console.WriteLine("ИТОГО сумма: " + generalCount);
+			Console.WriteLine();
 		}
 	}
 }

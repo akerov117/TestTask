@@ -29,16 +29,17 @@
 
 			while (!stream.IsEof)
 			{
-				char c = stream.ReadNextChar();
+				char originalLetter = stream.ReadNextChar();
 
 				// В статистику идут только буквы
-				if (!char.IsLetter(c))
+				if (!char.IsLetter(originalLetter))
 				{
-					prevLetter = null; // разрываем последовательность
+					prevLetter = null;
+
 					continue;
 				}
 
-				char letter = char.ToLowerInvariant(c); // НЕ регистрозависимо
+				char letter = char.ToUpper(originalLetter); // НЕ регистрозависимо
 
 				// Если текущая буква равна предыдущей — это парная буква (AA, CC, ...)
 				if (prevLetter.HasValue && prevLetter.Value == letter)

@@ -46,6 +46,7 @@
     <Compile Include="Enums\CharType.cs" />
     <Compile Include="Helpers\Extensions\CharExtension.cs" />
     <Compile Include="Helpers\FillLetterStatsHelper.cs" />
+    <Compile Include="Helpers\FilterCharStats.cs" />
     <Compile Include="Streams\Interfaces\IReadOnlyStream.cs" />
     <Compile Include="Structs\LetterStats.cs" />
     <Compile Include="Program.cs" />
