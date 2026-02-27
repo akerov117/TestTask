@@ -81,6 +81,7 @@ namespace TestTask
 				generalCount += item.Value.Count;
 			}
 
+			//По задаче не понял что имелось в виду под ИТОГО.
 			Console.WriteLine("ИТОГО уникальных: " + uniqueCount);
 			Console.WriteLine("ИТОГО сумма: " + generalCount);
 			Console.WriteLine();
