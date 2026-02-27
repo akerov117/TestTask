@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using TestTask.Streams.Interfaces;
 
@@ -64,6 +65,11 @@ namespace TestTask.Streams
 		/// <inheritdoc/>
 		public char ReadNextChar()
 		{
+			if (IsEof)
+			{
+				throw new EndOfStreamException("Невозможно прочитать текст после конца потока.");
+			}
+
 			char letter = (char)_streamReader.Read();
 
 			if (_streamReader.EndOfStream)
